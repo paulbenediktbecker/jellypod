@@ -1,27 +1,16 @@
 services:
   app:
-    image: m0ngr31/jellypod
-    container_name: jellypod
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jellypodbuild
     privileged: true
     cap_add:
       - SYS_ADMIN
     volumes:
       - ./data:/app/data
-      - /media/user/IPOD:/ipod
+      - /mnt/ipod:/ipod
       - /media/music:/musicdir
     environment:
-      - JELLYFIN_URL=
-      - JELLYFIN_USER=
-      - JELLYFIN_PASS=
-      - INSTANT_MIXES=
-      - ALLOWED_BOOKS=
       - MUSIC_MOUNT=/musicdir
-      - PODCASTS_MOUNT=
-      - AUDIOBOOKS_MOUNT=
-      - SYNC_AUDIOBOOKS=
-      - SYNC_PODCASTS=
-      - SMB_USER=guest
-      - SMB_PASSWORD=
-      - PGID=
-      - PUID=
     entrypoint: ["./entrypoint.sh"]
