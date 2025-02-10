@@ -1,12 +1,12 @@
 import {execSync, exec} from 'child_process';
 import _ from 'lodash';
 import fs from 'fs';
+import * as path from "path";
 import {globSync} from 'glob';
 import {ProgressBar} from 'ascii-progress';
 
 import config from './services/config';
 import synced from './services/synced';
-import JellyfinService from './services/jellyfin';
 
 const IPOD_PATH = '/ipod';
 
@@ -56,7 +56,7 @@ function getAllSongs(dirPath: string, fileList: string[] = []): string[] {
 const main = async () => {
 
   // Import all songs up-front - then filter based on already synced items
-  const allSongs = (getAllSongs("/musicdir")).filter(s => !synced.getId(s.Id));
+  const allSongs = (getAllSongs("/musicdir")).filter(s => !synced.getId(s));
 
   console.log('\nStarting Sync...\n');
 
@@ -76,13 +76,12 @@ const main = async () => {
       const args = [
         `-m ${IPOD_PATH}`,
         `"${mappedPath}"`,
-        mappedImagePath ? `--artwork "${mappedImagePath}"` : '',
         mappedPath.endsWith('.flac') ? '--decode=alac' : '',
       ];
       console.log(`gnupod_addsong ${args.join(' ')}`.trim() );
       await promiseExec(`gnupod_addsong ${args.join(' ')}`.trim());
 
-      synced.setItem(f.Id);
+      synced.setItem(f);
     } catch (e) {
       console.log(e);
     }
@@ -94,7 +93,6 @@ const main = async () => {
 
 main().then(async () => {
   await new Promise(resolve => setTimeout(resolve, 10 * 1000));
-  unmountVolumes();
   console.log('\nSync complete. Running mktunes...\n');
   execSync(`mktunes -m ${IPOD_PATH}`, {
     stdio: 'inherit',
