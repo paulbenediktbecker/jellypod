@@ -52,11 +52,34 @@ function getAllSongs(dirPath: string, fileList: string[] = []): string[] {
 
   return fileList;
 }
+function getAllArtworks(dirPath: string, fileList: string[] = []): string[] {
+  const files = fs.readdirSync(dirPath);
+
+  for (const file of files) {
+      const filePath = path.join(dirPath, file);
+      const stat = fs.statSync(filePath);
+
+      if (stat.isDirectory()) {
+          // Recurse into the subdirectory
+          getAllSongs(filePath, fileList);
+      } else if (path.extname(file).toLowerCase() === ".jpg") {
+          // Add only .mp3 files to the list
+          fileList.push(filePath);
+      }
+  }
+
+  return fileList;
+}
+
 
 const main = async () => {
 
   // Import all songs up-front - then filter based on already synced items
   const allSongs = (getAllSongs("/musicdir")).filter(s => !synced.getId(s));
+
+  const artworkpath = "/musicdir/artwork";
+  const allArtworks = getAllArtworks(artworkpath);
+  console.log(allArtworks);
 
   console.log('\nStarting Sync...\n');
 
@@ -71,13 +94,27 @@ const main = async () => {
   for (const f of allSongs) {
     let mappedPath: string = f
 
+    const song_id = mappedPath.split('/').pop()?.replace(/\.[^/.]+$/, "") || "";
+   
+    //check if song has an artwork
+    let artwork: string | undefined = allArtworks.find(entry => entry.includes(song_id));
 
     try {
-      const args = [
+      let args = [
         `-m ${IPOD_PATH}`,
         `"${mappedPath}"`,
         mappedPath.endsWith('.flac') ? '--decode=alac' : '',
       ];
+
+      if (artwork != undefined){
+        args = [
+          `-m ${IPOD_PATH}`,
+          `--artwork "${artwork}"`,
+          `"${mappedPath}"`,
+          mappedPath.endsWith('.flac') ? '--decode=alac' : '',
+        ];
+      }
+      
       console.log(`gnupod_addsong ${args.join(' ')}`.trim() );
       await promiseExec(`gnupod_addsong ${args.join(' ')}`.trim());
 
