@@ -9,8 +9,9 @@ services:
       - SYS_ADMIN
     volumes:
       - ./data:/app/data
-      - /mnt/ipod:/ipod
-      - /media/music:/musicdir
+      - /Volumes/PAULPOD:/ipod
+      - ./music3:/musicdir
     environment:
       - MUSIC_MOUNT=/musicdir
+      - RESET_IPOD=true
     entrypoint: ["./entrypoint.sh"]

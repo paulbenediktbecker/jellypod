@@ -15,6 +15,21 @@ if (!fs.existsSync(IPOD_PATH)) {
   throw new Error('iPod not found. Exiting...');
 }
 
+
+
+const RESET = process.env.RESET_IPOD;
+
+if(RESET) {
+  var r = execSync(`gnupod_search -m ${IPOD_PATH} title=.* --delete`);
+  console.log(r);
+  var r = execSync(`mktunes -m ${IPOD_PATH}`, {
+      stdio: 'inherit',
+    });
+  console.log(r);
+  console.log("Resetted your iPod.")
+}
+
+
 const promiseExec = (command: string) =>
   new Promise<void>((resolve, reject) =>
     exec(command, err => {
@@ -45,6 +60,14 @@ function getAllSongs(dirPath: string, fileList: string[] = []): string[] {
           // Recurse into the subdirectory
           getAllSongs(filePath, fileList);
       } else if (path.extname(file).toLowerCase() === ".mp3") {
+          // Add only .mp3 files to the list
+          fileList.push(filePath);
+      }
+      else if (path.extname(file).toLowerCase() === ".aac") {
+          // Add only .mp3 files to the list
+          fileList.push(filePath);
+      }
+      else if (path.extname(file).toLowerCase() === ".m4a") {
           // Add only .mp3 files to the list
           fileList.push(filePath);
       }
@@ -117,6 +140,8 @@ const main = async () => {
       
       console.log(`gnupod_addsong ${args.join(' ')}`.trim() );
       await promiseExec(`gnupod_addsong ${args.join(' ')}`.trim());
+      var r = execSync(`sync -f ${IPOD_PATH}`);
+      console.log(r);
 
       synced.setItem(f);
     } catch (e) {
@@ -134,5 +159,7 @@ main().then(async () => {
   execSync(`mktunes -m ${IPOD_PATH}`, {
     stdio: 'inherit',
   });
+  var r = execSync(`sync -f ${IPOD_PATH}`);
+  console.log(r);
 });
   
