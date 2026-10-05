@@ -10,8 +10,8 @@ services:
     volumes:
       - ./data:/app/data
       - /Volumes/PAULPOD:/ipod
-      - ./music3:/musicdir
+      - /Users/becker/git/jellypod/data:/musicdir
     environment:
       - MUSIC_MOUNT=/musicdir
-      - RESET_IPOD=true
+      - RESET_IPOD=True
     entrypoint: ["./entrypoint.sh"]

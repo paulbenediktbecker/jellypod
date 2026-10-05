@@ -9,6 +9,7 @@ ENV LANG="en_US.UTF-8" \
 RUN apt-get update
 RUN apt-get upgrade -y
 RUN apt-get install curl -y
+RUN apt-get install imagemagick -y
 
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
 

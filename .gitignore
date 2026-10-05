@@ -145,3 +145,7 @@ dist
 
 
 data/
+
+*.mp3
+*.m4a
+*.jpg

@@ -66,3 +66,5 @@ Here's some of the main ones:
 ## Security Considerations
 
 This container runs in privileged mode and has SYS_ADMIN capabilities. Ensure that you understand the security implications of running containers with elevated privileges.
+
+

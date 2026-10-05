@@ -71,6 +71,10 @@ function getAllSongs(dirPath: string, fileList: string[] = []): string[] {
           // Add only .mp3 files to the list
           fileList.push(filePath);
       }
+      else if (path.extname(file).toLowerCase() === ".flac") {
+          // Add only .mp3 files to the list
+          fileList.push(filePath);
+      }
   }
 
   return fileList;
@@ -126,7 +130,8 @@ const main = async () => {
       let args = [
         `-m ${IPOD_PATH}`,
         `"${mappedPath}"`,
-        mappedPath.endsWith('.flac') ? '--decode=alac' : '',
+        "--decode=aac"
+     
       ];
 
       if (artwork != undefined){
@@ -134,7 +139,7 @@ const main = async () => {
           `-m ${IPOD_PATH}`,
           `--artwork "${artwork}"`,
           `"${mappedPath}"`,
-          mappedPath.endsWith('.flac') ? '--decode=alac' : '',
+          "--decode=aac"
         ];
       }
       
@@ -150,6 +155,8 @@ const main = async () => {
 
     
   }
+
+  
   
 };
 
